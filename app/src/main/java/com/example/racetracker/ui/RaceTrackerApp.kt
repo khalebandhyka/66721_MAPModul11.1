@@ -1,18 +1,3 @@
-/*
- * Copyright (C) 2023 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.example.racetracker.ui
 
 import androidx.compose.foundation.layout.Arrangement
@@ -36,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -54,11 +40,6 @@ import com.example.racetracker.ui.theme.RaceTrackerTheme
 
 @Composable
 fun RaceTrackerApp() {
-    /**
-     * Note: To survive the configuration changes such as screen rotation, [rememberSaveable] should
-     * be used with custom Saver object. But to keep the example simple, and keep focus on
-     * Coroutines that implementation detail is stripped out.
-     */
     val playerOne = remember {
         RaceParticipant(name = "Player 1", progressIncrement = 1)
     }
@@ -66,6 +47,14 @@ fun RaceTrackerApp() {
         RaceParticipant(name = "Player 2", progressIncrement = 2)
     }
     var raceInProgress by remember { mutableStateOf(false) }
+
+    if (raceInProgress) {
+        LaunchedEffect(playerOne, playerTwo) {
+            playerOne.run()
+            playerTwo.run()
+            raceInProgress = false
+        }
+    }
 
     RaceTrackerScreen(
         playerOne = playerOne,
